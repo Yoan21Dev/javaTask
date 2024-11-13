@@ -32,9 +32,14 @@ public class Main {
                     eliminarCarro();
                     break;
                 case 6:
+                    generarReporteCarros();
+                    break;
+                case 7:
                     salir = true;
                     System.out.println("Saliendo del programa. ¡Hasta luego!");
                     break;
+                case 8 :
+
                 default:
                     System.out.println("Opción inválida. Por favor, elige una opción entre 1 y 6.");
             }
@@ -52,7 +57,8 @@ public class Main {
         System.out.println("3. Obtener Carro por ID");
         System.out.println("4. Actualizar Carro");
         System.out.println("5. Eliminar Carro");
-        System.out.println("6. Salir");
+        System.out.println("6. Reporte de Carros"); // Nueva opción para el reporte
+        System.out.println("7. Salir");
         System.out.print("Selecciona una opción: ");
     }
 
@@ -170,6 +176,26 @@ public class Main {
                 scanner.nextLine(); // Consumir la entrada inválida
                 System.out.print("Entrada inválida. Por favor, ingresa un número entero: ");
             }
+        }
+    }
+
+    private static void generarReporteCarros() {
+        System.out.println("=== Generar Reporte de Carros ===");
+
+        System.out.print("Ingresa la marca de los carros que deseas filtrar: ");
+        String marcaFiltro = scanner.nextLine();
+
+        System.out.print("Ingresa el año mínimo de los carros a incluir en el reporte: ");
+        int añoMinimo = leerEntero();
+
+        System.out.print("Ingresa la cantidad máxima de carros a mostrar en el reporte: ");
+        int limite = leerEntero();
+
+        List<Carro> reporte = repo.generarReporte(marcaFiltro, añoMinimo, limite);
+        if (reporte.isEmpty()) {
+            System.out.println("No se encontraron carros que cumplan con el filtro especificado.");
+        } else {
+            reporte.forEach(System.out::println);
         }
     }
 }

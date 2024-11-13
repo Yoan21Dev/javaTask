@@ -1,9 +1,8 @@
 package org.example;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CarroRepositoryImpl implements CarroRepository {
     private List<Carro> carros = new ArrayList<>();
@@ -44,5 +43,17 @@ public class CarroRepositoryImpl implements CarroRepository {
     public void eliminarCarro(int id) throws CarroException {
         Carro carro = obtenerCarroPorId(id);
         carros.remove(carro);
+    }
+
+
+    // Método de reporte con Streams
+    @Override
+    public List<Carro> generarReporte(String marcaFiltro, int añoMinimo, int limite) {
+        return carros.stream()
+                .filter(c -> c.getMarca().equalsIgnoreCase(marcaFiltro))
+                .filter(c -> c.getAño() >= añoMinimo) // Filtra por año mínimo
+                .sorted(Comparator.comparingInt(Carro::getAño).reversed()) // Ordena por año descendente
+                .limit(limite) // Limita a los n carros más recientes
+                .collect(Collectors.toList());
     }
 }

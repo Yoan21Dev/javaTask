@@ -8,4 +8,7 @@ public interface CarroRepository {
     List<Carro> obtenerTodosLosCarros();
     void actualizarCarro(Carro carro) throws CarroException;
     void eliminarCarro(int id) throws CarroException;
+
+    // Método de reporte con Streams
+    List<Carro> generarReporte(String marcaFiltro, int añoMinimo, int limite);
 }
