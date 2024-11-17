@@ -3,6 +3,12 @@ package org.example;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 public class Main {
     private static CarroRepository repo = new CarroRepositoryImpl();
@@ -35,13 +41,14 @@ public class Main {
                     generarReporteCarros();
                     break;
                 case 7:
+                    leerReporteDesdeArchivo();
+                    break;
+                case 8:
                     salir = true;
                     System.out.println("Saliendo del programa. ¡Hasta luego!");
                     break;
-                case 8 :
-
                 default:
-                    System.out.println("Opción inválida. Por favor, elige una opción entre 1 y 6.");
+                    System.out.println("Opción inválida. Por favor, elige una opción entre 1 y 8.");
             }
 
             System.out.println(); // Línea en blanco para mejor legibilidad
@@ -58,7 +65,8 @@ public class Main {
         System.out.println("4. Actualizar Carro");
         System.out.println("5. Eliminar Carro");
         System.out.println("6. Reporte de Carros"); // Nueva opción para el reporte
-        System.out.println("7. Salir");
+        System.out.println("7. Leer Reporte desde Archivo");
+        System.out.println("8. Salir");
         System.out.print("Selecciona una opción: ");
     }
 
@@ -195,7 +203,37 @@ public class Main {
         if (reporte.isEmpty()) {
             System.out.println("No se encontraron carros que cumplan con el filtro especificado.");
         } else {
-            reporte.forEach(System.out::println);
+            // Guardar reporte en archivo .txt
+            Path rutaArchivo = Paths.get("reporte_carros.txt");
+            try {
+                String contenido = reporte.stream()
+                        .map(Carro::toString)
+                        .collect(Collectors.joining(System.lineSeparator()));
+                Files.write(rutaArchivo, contenido.getBytes(StandardCharsets.UTF_8));
+                System.out.println("Reporte generado y guardado en " + rutaArchivo.toAbsolutePath());
+            } catch (IOException e) {
+                System.err.println("Error al guardar el reporte en el archivo: " + e.getMessage());
+            }
+        }
+    }
+    private static void leerReporteDesdeArchivo() {
+        System.out.println("=== Leer Reporte desde Archivo ===");
+        Path rutaArchivo = Paths.get("reporte_carros.txt");
+
+        if (Files.exists(rutaArchivo)) {
+            try {
+                List<String> lineas = Files.readAllLines(rutaArchivo, StandardCharsets.UTF_8);
+                if (lineas.isEmpty()) {
+                    System.out.println("El archivo de reporte está vacío.");
+                } else {
+                    System.out.println("Contenido del reporte:");
+                    lineas.forEach(System.out::println);
+                }
+            } catch (IOException e) {
+                System.err.println("Error al leer el archivo de reporte: " + e.getMessage());
+            }
+        } else {
+            System.out.println("No se encontró el archivo de reporte. Genera un reporte primero.");
         }
     }
 }
